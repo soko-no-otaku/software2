@@ -18,10 +18,10 @@ void init_cells()
   }
 
   cell[20][30] = 1;
-  cell[22][30] = 1;
-  cell[22][31] = 1;
-  cell[23][31] = 1;
+  cell[20][31] = 1;
   cell[20][32] = 1;
+  cell[21][31] = 1;
+  cell[22][30] = 1;
 }
 
 void print_cells(FILE *fp)
