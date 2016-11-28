@@ -66,9 +66,19 @@ void update_cells()
     for (j = 0; j < WIDTH; j++) {
       cell_next[i][j] = 0;
       const int n = count_adjacent_cells(i, j);
-
-      /*  ???  */
-
+      if (cell[i][j] == 1) {
+        if (n == 2 || n == 3) {
+          cell_next[i][j] = 1;
+        } else {
+          cell_next[i][j] = 0;
+        }
+      } else {
+        if (n == 3) {
+          cell_next[i][j] = 1;
+        } else {
+          cell_next[i][j] = 0;
+        }
+      }
     }
   }
 
