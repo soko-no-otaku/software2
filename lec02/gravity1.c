@@ -76,7 +76,7 @@ void update_positions(const double dt)
   }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   const char *filename = "space.txt";
   FILE *fp;
@@ -85,7 +85,7 @@ int main()
     return 1;
   }
 
-  const double dt = 1.0;
+  double dt = atof(argv[1]);
   const double stop_time = 400;
 
   int i;
