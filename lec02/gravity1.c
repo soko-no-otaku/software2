@@ -18,7 +18,7 @@ struct star
 
 struct star stars[] = {
   { 1.0, -10.0, 0.0 },
-  { 0.5,  10.0, 0.2 } 
+  { 0.5,  10.0, 0.2 }
 };
 
 const int nstars = sizeof(stars) / sizeof(struct star);
@@ -49,7 +49,7 @@ void plot_stars(FILE *fp, const double t)
   fflush(fp);
 
   printf("t = %5.1f", t);
-  for (i = 0; i < nstars; i++) 
+  for (i = 0; i < nstars; i++)
     printf(", stars[%d].x = %7.2f", i, stars[i].x);
   printf("\n");
 }
@@ -59,9 +59,11 @@ void update_velocities(const double dt)
   int i, j;
   for (i = 0; i < nstars; i++) {
     double ax = 0;
-
-    /*  ???  */
-
+    for (j = 0; j < nstars; j++) {
+      if (j != i) {
+        ax += G * stars[j].m * (stars[j].x - stars[i].x) / pow(fabs(stars[j].x - stars[i].x), 3);
+      }
+    }
     stars[i].vx += ax * dt;
   }
 }
