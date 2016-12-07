@@ -4,7 +4,7 @@
 #include <math.h>
 #include <unistd.h>
 
-#define WIDTH 75
+#define WIDTH  75
 #define HEIGHT 40
 
 const double G = 1.0;  // gravity constant
