@@ -14,7 +14,7 @@ char canvas[WIDTH][HEIGHT];
 
 const char *default_history_file = "history.txt";
 
-struct node 
+struct node
 {
   char *str;
   struct node *next;
@@ -31,7 +31,7 @@ Node *push_front(Node *begin, const char *str)
   char *s = malloc(strlen(str) + 1);
   strcpy(s, str);
   p->str = s;
-  p->next = begin; 
+  p->next = begin;
 
   return p;  // Now the new element is the first element in the list
 }
@@ -80,7 +80,7 @@ Node *pop_back(Node *begin)
     return pop_front(begin);
 
   // Find the second-to-last element
-  while (p->next->next != NULL) { 
+  while (p->next->next != NULL) {
     p = p->next;
   }
 
@@ -138,17 +138,39 @@ void draw_line(const int x0, const int y0, const int x1, const int y1)
   }
 }
 
+void draw_rect(const int x0, const int y0, const int x1, const int y1) {
+  int i, j;
+  for (i = x0; i <= x1; i++) {
+    for (j = y0; j <= y1; j++) {
+      canvas[i][j] = '#';
+    }
+  }
+}
+
+void draw_circle(const int x0, const int y0, const int r0) {
+  int i, j;
+  for (i = -r0; i <= r0; i++) {
+    if (i + x0 < 0 || WIDTH <= i + x0) continue;
+    for (j = -r0; j <= r0; j++) {
+      if (j + y0 <0 || HEIGHT <= j + y0) continue;
+      if (i * i + j * j <= r0 * r0) {
+        canvas[i + x0][j + y0] = '#';
+      }
+    }
+  }
+}
+
 void save_history(const char *filename)
 {
   if (filename == NULL)
     filename = default_history_file;
-  
+
   FILE *fp;
   if ((fp = fopen(filename, "w")) == NULL) {
     fprintf(stderr, "error: cannot open %s.\n", filename);
     return;
   }
-  
+
   const Node *p;
   for (p = begin; p != NULL; p = p->next) {
     fprintf(fp, "%s", p->str);
@@ -180,6 +202,25 @@ int interpret_command(const char *command)
     x1 = atoi(strtok(NULL, " "));
     y1 = atoi(strtok(NULL, " "));
     draw_line(x0, y0, x1, y1);
+    return 0;
+  }
+
+  if (strcmp(s, "rect") == 0) {
+    int x0, y0, x1, y1;
+    x0 = atoi(strtok(NULL, " "));
+    y0 = atoi(strtok(NULL, " "));
+    x1 = atoi(strtok(NULL, " "));
+    y1 = atoi(strtok(NULL, " "));
+    draw_rect(x0, y0, x1, y1);
+    return 0;
+  }
+
+  if (strcmp(s, "circle") == 0) {
+    int x0, y0, r0;
+    x0 = atoi(strtok(NULL, " "));
+    y0 = atoi(strtok(NULL, " "));
+    r0 = atoi(strtok(NULL, " "));
+    draw_circle(x0, y0, r0);
     return 0;
   }
 
