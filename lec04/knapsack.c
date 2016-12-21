@@ -8,8 +8,11 @@ const double W = 20;      // capacity of the knapsack
 double v[MAX_ITEMS + 1]; // value  (v[0] is not used)
 double w[MAX_ITEMS + 1]; // weight (w[0] is not used)
 int x[MAX_ITEMS + 1];    // in or out (x[0] is not used)
+int y[MAX_ITEMS + 1];    // best solution (y[0] is not used)
 
-void print_solution(const int n, const int _x[MAX_ITEMS + 1])
+double max_value = 0;
+
+void print_solution(const int n, const int _x[MAX_ITEMS + 1], int _y[MAX_ITEMS + 1])
 {
   int i;
   double sum_value = 0;
@@ -20,6 +23,12 @@ void print_solution(const int n, const int _x[MAX_ITEMS + 1])
     sum_value  += v[i];
     sum_weight += w[i];
   }
+  if (sum_value > max_value) {
+    max_value = sum_value;
+    for (i = 1; i <= n; i++) {
+      _y[i] = _x[i];
+    }
+  }
   printf(", total_value = %5.1f, total_weight = %5.1f\n", sum_value, sum_weight);
 }
 
@@ -27,12 +36,16 @@ double search(const int i, const int n, const double sum_v, const double sum_w)
 {
   assert(i >= 1 && sum_v >= 0 && sum_w >= 0);
   if (i == n + 1) {
-    print_solution(n, x);
+    print_solution(n, x, y);
     return sum_v;
   }
 
   x[i] = 0;
   const double v0 = search(i + 1, n, sum_v, sum_w);
+
+  if (sum_w + w[i] > W) {
+    return v0;
+  }
 
   x[i] = 1;
   const double v1 = search(i + 1, n, sum_v + v[i], sum_w + w[i]);
@@ -73,6 +86,8 @@ int main(int argc, char **argv)
   const double value = solve(n);
 
   printf("-----\nbest solution:\n");
+  for (i = 1; i <= n; i++) printf("%d", y[i]);
+  printf(", value = %5.1f\n", value);
 
   return 0;
 }
