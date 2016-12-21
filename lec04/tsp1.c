@@ -9,6 +9,7 @@
 #define WIDTH 70
 #define HEIGHT 40
 #define MAX_CITIES 1000
+#define N 1000 // number of trials
 
 typedef struct
 {
@@ -66,7 +67,7 @@ void plot_cities(FILE *fp, const int n, const int *route)
   }
 
   draw_route(n, route);
-    
+
   for (y = 0; y < HEIGHT; y++) {
     for (x = 0; x < WIDTH; x++) {
       const char c = map[x][y];
@@ -99,8 +100,9 @@ double total_distance(const int n, const int route[])
 
 int visited[MAX_CITIES];
 double best_total_distance;
-double best_route[MAX_CITIES];
+int best_route[MAX_CITIES];
 
+/*
 void search(const int i, const int n, int route[])
 {
   int j;
@@ -124,22 +126,74 @@ void search(const int i, const int n, int route[])
     visited[j] = 0;
   }
 }
+*/
+
+double hc(const int n, int route[], double local_best_total_distance, int local_best_route[]) {
+  double current_td = total_distance(n, route);
+
+  int j;
+  int s, t;
+  for (s = 0; s < n; s++) {
+    for (t = 0; t < s; t++) {
+      int tmp = route[s];
+      route[s] = route[t];
+      route[t] = tmp;
+
+      double td = total_distance(n, route);
+      if (td < local_best_total_distance) {
+        local_best_total_distance = td;
+        for (j = 0; j < n; j++) {
+          local_best_route[j] = route[j];
+        }
+      }
+
+      route[t] = route[s];
+      route[s] = tmp;
+    }
+  }
+  if (local_best_total_distance < current_td) {
+    for (j = 0; j < n; j++) {
+      route[j] = local_best_route[j];
+    }
+    return hc(n, route, local_best_total_distance, local_best_route);
+  } else {
+    return local_best_total_distance;
+  }
+}
+
+void shuffle(const int n, int route[]) {
+  for(int from = 0; from < n; from++) {
+    int to = rand() % n;
+    int tmp = route[to];
+    route[to] = route[from];
+    route[from] = tmp;
+  }
+}
 
 double solve(const int n, int route[])
 {
   int i;
 
-  route[0] = 0;  // Start from city[0]
-
-  best_total_distance = DBL_MAX;
-  for (i = 1; i < n; i++) {
-    visited[i] = 0;
+  for (i = 0; i < n; i++) {
+    route[i] = i;
   }
-  search(1, n, route);
-  for (i = 1; i < n; i++) {
+  best_total_distance = DBL_MAX;
+  for (int trial = 0; trial < N; trial++) {
+    int local_best_route[MAX_CITIES];
+    shuffle(n, route);
+    double local_best_total_distance = hc(n, route, DBL_MAX, local_best_route);
+    if (local_best_total_distance < best_total_distance) {
+      best_total_distance = local_best_total_distance;
+      for (int j = 0; j < n; j++) {
+        best_route[j] = local_best_route[j];
+      }
+    }
+  }
+
+  for (i = 0; i < n; i++) {
     route[i] = best_route[i];
   }
-  
+
 
   // Compute the total distance
   double sum_d = 0;
@@ -150,6 +204,15 @@ double solve(const int n, int route[])
   }
 
   return sum_d;
+}
+
+void print_route(int n, int route[]) {
+  int i;
+  printf("route: ");
+  for (i = 0; i < n - 1; i++) {
+    printf("%d-", route[i]);
+  }
+  printf("%d\n", route[i]);
 }
 
 int main(const int argc, const char **argv)
@@ -182,6 +245,7 @@ int main(const int argc, const char **argv)
   const double d = solve(n, route);
 
   printf("total distance = %f\n", d);
+  print_route(n, route);
   plot_cities(fp, n, route);
 
   return 0;
