@@ -28,22 +28,25 @@ const int nsamples = sizeof(data) / sizeof(data[0]);
 
 int f_dimension()
 {
-  /*
-     ???
-  */
+  return 2;
 }
 
 double f_value(const double x[])
 {
-  /*
-     ???
-  */
+  double E = 0;
+  for (int i = 0; i < nsamples; i++) {
+    E += (data[i].temp - (x[0] * data[i].alt + x[1]))
+       * (data[i].temp - (x[0] * data[i].alt + x[1]));
+  }
+  return E;
 }
 
 void f_gradient(const double x[], double g[])
 {
-  /*
-     ???
-  */
+  g[0] = 0;
+  g[1] = 0;
+  for (int i = 0; i < nsamples; i++) {
+    g[0] += -2 * (data[i].temp - (x[0] * data[i].alt + x[1])) * data[i].alt;
+    g[1] += -2 * (data[i].temp - (x[0] * data[i].alt + x[1]));
+  }
 }
-
