@@ -17,7 +17,7 @@ int main(const int argc, const char **argv)
 
   printf("alpha = %f\n", alpha);
 
-  const int iter = optimize(alpha, dim, x, f_gradient);
+  const int iter = optimize(alpha, dim, x, f_gradient, f_value);
 
   printf("number of iterations = %d\n", iter);
 
@@ -25,4 +25,3 @@ int main(const int argc, const char **argv)
 
   return 0;
 }
-

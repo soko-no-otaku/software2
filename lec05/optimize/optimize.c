@@ -14,8 +14,8 @@ double calc_norm(const int dim, double v[])
   return tmp;
 }
 
-int optimize(const double alpha, const int dim, double x[], 
-             void (*calc_grad)(const double [], double []))
+int optimize(const double alpha, const int dim, double x[],
+             void (*calc_grad)(const double [], double []), double (*calc_val)(const double []))
 {
   int i;
 
@@ -31,9 +31,10 @@ int optimize(const double alpha, const int dim, double x[],
     for (i = 0; i < dim; i++) {
       printf(", x[%d] = %7.4f", i, x[i]);
     }
+    printf(", f(x) = %7.4f", calc_val(x));
     putchar('\n');
 
-    if (norm < 0.01) break;
+    if (norm < 0.0001) break;
 
     for (i = 0; i < dim; i++) {
       x[i] -= alpha * g[i];
@@ -44,4 +45,3 @@ int optimize(const double alpha, const int dim, double x[],
 
   return iter;
 }
-
