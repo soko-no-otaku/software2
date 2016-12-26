@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g
 #CFLAGS = -O2 -DNDEBUG
 LDLIBS = -lm
-OBJS = main.o func.o optimize.o
+OBJS = func2.o func1.o optimize.o
 
 a.out:	$(OBJS)
 	$(CC) $(OBJS) $(LDLIBS)
