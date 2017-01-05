@@ -23,15 +23,16 @@ static void count_symbols(const char *filename)
     fprintf(stderr, "error: cannot open %s\n", filename);
     exit(1);
   }
-  
+
   int i;
   for (i = 0; i < NSYMBOLS; i++) {
     symbol_count[i] = 0;
   }
 
-  /*
-    ???
-  */
+  int c;
+  while ((c = fgetc(fp)) != EOF) {
+    symbol_count[c]++;
+  }
 
   symbol_count[NSYMBOLS-1]++; // End of File
 
@@ -78,24 +79,34 @@ static Node *build_tree()
     Node *node1 = pop_min(&n, nodep);
     Node *node2 = pop_min(&n, nodep);
 
-    // Create a new node
-    /*
-      ???
-    */
+    nodep[n] = malloc(sizeof(Node));
+    nodep[n]->count = node1->count + node2->count;
+    nodep[n]->left  = node1;
+    nodep[n]->right = node2;
+    n++;
   }
 
   return nodep[0];
 }
+
+int code[NSYMBOLS];
 
 // Perform depth-first traversal of the tree
 static void traverse_tree(const int depth, const Node *np)
 {
   assert(depth < NSYMBOLS);
 
-  if (np->left == NULL) return;
+  if (np->left == NULL) {
+    printf("%c: ", np->symbol);
+    for (int i = 0; i < depth; i++) {
+      printf("%d", code[i]);
+    }
+    printf("\n");
+    return;
+  }
 
-  traverse_tree(depth + 1, np->left);
-  traverse_tree(depth + 1, np->right);
+  code[depth] = 0; traverse_tree(depth + 1, np->left);
+  code[depth] = 1; traverse_tree(depth + 1, np->right);
 }
 
 int encode(const char *filename)
