@@ -13,9 +13,8 @@ void traverse(const Node *n)
 
   printf("value = %d\n", n->value);
 
-  /*
-    ???
-  */
+  traverse(n->left);
+  traverse(n->right);
 }
 
 int main()
@@ -31,9 +30,15 @@ int main()
   Node n9  = {  9, NULL, NULL };
   Node n10 = { 10, NULL, NULL };
 
-  /*
-    ???
-  */
+  n1.left = &n2;
+  n2.left = &n3;
+  n3.left = &n4;
+  n3.right = &n5;
+  n2.right = &n6;
+  n1.right = &n7;
+  n7.left = &n8;
+  n8.left = &n9;
+  n7.right = &n10;
 
   traverse(&n1);
 }
