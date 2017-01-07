@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -g
-OBJS = main.o encode.o
+OBJS = main.o encode1.o
 
 a.out:	$(OBJS)
 	$(CC) $(OBJS) $(LDLIBS)
