@@ -2,8 +2,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define HEIGHT 50
-#define WIDTH 70
+#define HEIGHT 200
+#define WIDTH 200
 
 int cell[HEIGHT][WIDTH];
 
@@ -17,11 +17,7 @@ void init_cells()
     }
   }
 
-  cell[20][30] = 1;
-  cell[20][31] = 1;
-  cell[20][32] = 1;
-  cell[21][31] = 1;
-  cell[22][30] = 1;
+  cell[100][100] = 1;
 }
 
 void print_cells(FILE *fp)
@@ -50,6 +46,7 @@ int count_adjacent_cells(int i, int j)
     if (k < 0 || k >= HEIGHT) continue;
     for (l = j - 1; l <= j + 1; l++) {
       if (k == i && l == j) continue;
+      if (k != i && l != j) continue;
       if (l < 0 || l >= WIDTH) continue;
       n += cell[k][l];
     }
@@ -66,18 +63,10 @@ void update_cells()
     for (j = 0; j < WIDTH; j++) {
       cell_next[i][j] = 0;
       const int n = count_adjacent_cells(i, j);
-      if (cell[i][j] == 1) {
-        if (n == 2 || n == 3) {
-          cell_next[i][j] = 1;
-        } else {
-          cell_next[i][j] = 0;
-        }
+      if (n == 1) {
+        cell_next[i][j] = 1;
       } else {
-        if (n == 3) {
-          cell_next[i][j] = 1;
-        } else {
-          cell_next[i][j] = 0;
-        }
+        cell_next[i][j] = 0;
       }
     }
   }
@@ -114,7 +103,7 @@ int main()
   print_cells(fp);
 
   for (gen = 1;; gen++) {
-    printf("generation = %d, ", gen);
+    printf("generation = %d, ", gen - 1);
     printf("population = %d\n", count_population());
     update_cells();
     print_cells(fp);
